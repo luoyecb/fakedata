@@ -682,7 +682,8 @@ function execMain() {
     $opts = ArgParser::getOptions();
     extract($opts);
 
-    if ($help) {
+    global $argc;
+    if ($help || $argc == 1) {
         $filename = basename(__FILE__, '.php');
         echo <<<USAGE_STR
 Usage: php {$filename} [option]
@@ -691,6 +692,19 @@ option:
     --key|-key KEY_NAME
     --format|-format FORMAT_STRING
     -n NUM
+
+KEY_NAME:
+    phone, phone2
+    uuid
+    decimal
+    date, time, datetime
+    word, word2
+    email
+    chinese, chinese2
+    name, name2
+
+FORMAT_STRING example:
+    insert into demo values ('{phone}', '{email}');
 
 USAGE_STR;
         exit(0);
