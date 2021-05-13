@@ -1,78 +1,64 @@
 <?php
 namespace Luoyecb;
 
-use Luoyecb\PhoneNumberGenerator;
-use Luoyecb\PhoneNumber2Generator;
-use Luoyecb\UUIDGenerator;
-use Luoyecb\DecimalGenerator;
-use Luoyecb\DateGenerator;
-use Luoyecb\TimeGenerator;
-use Luoyecb\DateTimeGenerator;
-use Luoyecb\WordGenerator;
-use Luoyecb\Word2Generator;
-use Luoyecb\EmailGenerator;
-use Luoyecb\ChineseGenerator;
-use Luoyecb\Chinese2Generator;
-use Luoyecb\NameGenerator;
-use Luoyecb\Name2Generator;
-
-class FactoryGenerator
-{
+class FactoryGenerator {
     private static $classmaps = [
-        'phone' => PhoneNumberGenerator::class,
-        'phone2' => PhoneNumber2Generator::class,
-        'uuid' => UUIDGenerator::class,
-        'decimal' => DecimalGenerator::class,
-        'date' => DateGenerator::class,
-        'time' => TimeGenerator::class,
-        'datetime' => DateTimeGenerator::class,
-        'word' => WordGenerator::class,
-        'word2' =>Word2Generator::class,
-        'email' => EmailGenerator::class,
-        'chinese' => ChineseGenerator::class,
-        'chinese2' => Chinese2Generator::class,
-        'name' => NameGenerator::class,
-        'name2' => Name2Generator::class,
+        'phone'     => \Luoyecb\Generator\PhoneNumberGenerator::class,
+        'phone2'    => \Luoyecb\Generator\PhoneNumber2Generator::class,
+        'uuid'      => \Luoyecb\Generator\UUIDGenerator::class,
+        'decimal'   => \Luoyecb\Generator\DecimalGenerator::class,
+        'date'      => \Luoyecb\Generator\DateGenerator::class,
+        'time'      => \Luoyecb\Generator\TimeGenerator::class,
+        'datetime'  => \Luoyecb\Generator\DateTimeGenerator::class,
+        'word'      => \Luoyecb\Generator\WordGenerator::class,
+        'word2'     => \Luoyecb\Generator\Word2Generator::class,
+        'email'     => \Luoyecb\Generator\EmailGenerator::class,
+        'chinese'   => \Luoyecb\Generator\ChineseGenerator::class,
+        'chinese2'  => \Luoyecb\Generator\Chinese2Generator::class,
+        'name'      => \Luoyecb\Generator\NameGenerator::class,
+        'name2'     => \Luoyecb\Generator\Name2Generator::class,
+        'manname'   => \Luoyecb\Generator\ManNameGenerator::class,
+        'womanname' => \Luoyecb\Generator\WomanNameGenerator::class,
     ];
-    private static $objectContainers = [];
+    private static $objectContainer = [];
 
-    // register generator
+    public static function create($geKey) {
+        if (!isset(self::$classmaps[$geKey])) {
+            return null;
+        }
+        if (!isset(self::$objectContainer[$geKey])) {
+            self::$objectContainer[$geKey] = new self::$classmaps[$geKey]();
+        }
+        return self::$objectContainer[$geKey];
+    }
+
     public static function register($geKey, $className) {
         if (!isset(self::$classmaps[$geKey]) && class_exists($className)) {
             self::$classmaps[$geKey] = $className;
         }
     }
 
-    // factory method
-    public static function create($geKey) {
-        if (isset(self::$classmaps[$geKey])) {
-            if (!isset(self::$objectContainers[$geKey])) {
-                self::$objectContainers[$geKey] = new self::$classmaps[$geKey]();
-            }
-            return self::$objectContainers[$geKey];
-        }
-        return null;
-    }
-
     public static function __callStatic($name, $args) {
-        if (isset(self::$classmaps[$name])) {
-            $obj = self::create($name);
-            return $obj->createData();
+        if (!isset(self::$classmaps[$name])) {
+            return null;
         }
-        return null;
+        $obj = self::create($name);
+        return $obj->createData();
     }
 
     public static function formatString($string) {
-        return preg_replace_callback('/\{\s*(\w+)\s*\}/i',
-            [__CLASS__, '_formatStringCallback'], $string);
+        return preg_replace_callback(
+            '/\{\s*(\w+)\s*\}/i',
+            [__CLASS__, '_formatStringCallback'],
+            $string);
     }
 
     public static function _formatStringCallback($matchs) {
         $key = $matchs[1];
-        if (isset(self::$classmaps[$key])) {
-            $obj = self::create($key);
-            return $obj->createData();
+        if (!isset(self::$classmaps[$key])) {
+            return $matchs[0];
         }
-        return $matchs[0];
+        $obj = self::create($key);
+        return $obj->createData();
     }
 }

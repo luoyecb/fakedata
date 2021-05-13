@@ -1,11 +1,10 @@
 <?php
-namespace Luoyecb;
+namespace Luoyecb\Generator;
 
 use Luoyecb\IGenerator;
 use Luoyecb\Util\RandUtil;
 
-class NameGenerator implements IGenerator
-{
+class NameGenerator implements IGenerator {
     // 百家姓
     protected $surname = array(
         '赵','钱','孙','李','周','吴','郑','王','冯','陈','楮','卫','蒋','沈','韩','杨','朱','秦',
@@ -38,8 +37,8 @@ class NameGenerator implements IGenerator
         '羊舌','微生','岳','帅','缑','亢','况','后','有','琴','梁丘','左丘','东门','西门','商','牟',
         '佴','伯','赏','南宫','墨','哈','谯','笪','年','爱','阳','佟','第五','言','福','宰父','佘',
     );
-    protected $lastname = array(
-        // 男士常见名
+    // 男士常见名
+    protected $manLastname = array(
         '伟','强','磊','洋','勇','军','杰','涛','超','明',
         '刚','平','辉','鹏','华','飞','鑫','波','斌','宇',
         '浩','凯','健','俊','帆','帅','旭','宁','龙','林',
@@ -50,7 +49,9 @@ class NameGenerator implements IGenerator
         '松','伦','超','钟','瑜','振国','洪','毅','昱然','哲',
         '翔','翼','祥','国庆','哲彦','正诚','正豪','正平','正业','志诚',
         '志新','志勇','志明','志强','志文','致远','智明','智勇','智敏','智渊',
-        // 女士常见名
+    );
+    // 女士常见名
+    protected $womanLastname = array(
         '芳','娜','敏','静','敏静','秀英','丽','洋','艳','娟',
         '文娟','君','文君','珺','霞','明霞','秀兰','燕','芬','桂芬',
         '玲','桂英','丹','萍','华','红','玉兰','桂兰','英','梅',
@@ -62,12 +63,22 @@ class NameGenerator implements IGenerator
         '秀华','桂芝','小红','金凤','文','利','楠','红霞','瑜','桂花',
         '璐','凤兰','腊梅','瑶','嘉','怡','冰冰','玉梅','慧','婕','莉莉',
     );
-    protected $surnameLength = 503;
-    protected $lastnameLength = 200;
 
     public function createData() {
-        $name = $this->surname[ RandUtil::rand($this->surnameLength) ];
-        $name .= $this->lastname[ RandUtil::rand($this->lastnameLength) ];
+        $index = RandUtil::randGe0LeMax(count($this->surname)-1);
+        $name = $this->surname[$index];
+
+        $manLen = count($this->manLastname);
+        $womanLen = count($this->womanLastname);
+
+        $index = RandUtil::randGe0LeMax($manLen + $womanLen - 1);
+        if ($index < $manLen) {
+            $name .= $this->manLastname[$index];
+        } else {
+            $index -= $manLen;
+            $name .= $this->womanLastname[$index];
+        }
+
         return $name;
     }
 }

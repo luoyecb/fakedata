@@ -1,7 +1,6 @@
 <?php
 namespace Luoyecb;
 
-interface IGenerator
-{
+interface IGenerator {
 	public function createData();
 }

@@ -1,10 +1,9 @@
 <?php
-namespace Luoyecb;
+namespace Luoyecb\Generator;
 
 use Luoyecb\IGenerator;
 
-class UUIDGenerator implements IGenerator
-{
+class UUIDGenerator implements IGenerator {
 	public function createData() {
 		$tmpStr = md5(uniqid().microtime().mt_rand());
 		$uuid = substr($tmpStr, 0, 8) . '-';

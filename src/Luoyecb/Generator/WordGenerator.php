@@ -1,11 +1,10 @@
 <?php
-namespace Luoyecb;
+namespace Luoyecb\Generator;
 
 use Luoyecb\IGenerator;
 use Luoyecb\Util\RandUtil;
 
-class WordGenerator implements IGenerator
-{
+class WordGenerator implements IGenerator {
     private $wordList = array(
         'alias', 'consequatur', 'aut', 'perferendis', 'sit', 'voluptatem',
         'accusantium', 'doloremque', 'aperiam', 'eaque','ipsa', 'quae', 'ab',
@@ -47,6 +46,7 @@ class WordGenerator implements IGenerator
     );
 
     public function createData() {
-        return $this->wordList[ RandUtil::rand(count($this->wordList) - 1) ];
+        $index = RandUtil::randGe0LeMax(count($this->wordList)-1);
+        return $this->wordList[$index];
     }
 }

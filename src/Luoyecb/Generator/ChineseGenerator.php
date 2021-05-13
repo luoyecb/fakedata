@@ -1,11 +1,10 @@
 <?php
-namespace Luoyecb;
+namespace Luoyecb\Generator;
 
 use Luoyecb\IGenerator;
 use Luoyecb\Util\RandUtil;
 
-class ChineseGenerator implements IGenerator
-{
+class ChineseGenerator implements IGenerator {
 	// 2500个常用汉字
 	private $chineseChars = array(
 		'一','乙','二','十','丁','厂','七','卜','人','入','八','九','几','儿','了','力','乃','刀','又','三','于','干','亏','士','工','争','色','壮','冲','冰',
@@ -95,6 +94,7 @@ class ChineseGenerator implements IGenerator
 	);
 
     public function createData() {
-        return $this->chineseChars[ RandUtil::rand(2499) ];
+    	$index = RandUtil::randGe0LeMax(count($this->chineseChars)-1);
+        return $this->chineseChars[$index];
     }
 }

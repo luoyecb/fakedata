@@ -1,29 +1,39 @@
 <?php
 namespace Luoyecb\Util;
 
-class RandUtil
-{
-    // 生成区间[min, max]的整数
-    public static function rand($max = NULL, $min = 0) {
-        if($max === NUll) {
-            $max = mt_getrandmax();
-        }
+class RandUtil {
+
+    public static function randGe0() {
+        return mt_rand();
+    }
+
+    public static function randGe0LeMax($max) {
+        return mt_rand(0, $max);
+    }
+
+    public static function rand($min, $max) {
         return mt_rand($min, $max);
     }
 
-    // 生成区间[0, 1]的浮点数
-    public static function randFloat($min = 0, $max = 1) {
-        return $min + mt_rand() / mt_getrandmax() * ($max - $min);
+    public static function randFloat() {
+        return self::randFloat2(0, 1);
     }
 
-    // 生成数字字符串
+    public static function randFloat2($min, $max) {
+        return $min + mt_rand()/mt_getrandmax()*($max-$min);
+    }
+
     public static function randNumber($length) {
-        $numberStr = '';
-        while ($length > 4) {
-            $numberStr .= self::rand(9999, 1000);
-            $length -= 4;
+        $s = "" . self::rand(1, 9);
+        if ($length <= 1) {
+            return $s;
         }
-        $numberStr .= self::rand(pow(10, $length)-1, pow(10, $length-1));
-        return $numberStr;
+
+        $a = [];
+        for ($i = 1; $i < $length; $i++) {
+            $a[] = self::rand(0, 9);
+        }
+        shuffle($a);
+        return $s . implode("", $a);
     }
 }

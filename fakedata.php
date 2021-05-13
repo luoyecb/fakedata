@@ -5,12 +5,13 @@ use Luoyecb\ArgParser;
 use Luoyecb\FactoryGenerator;
 
 function execMain() {
-    ArgParser::addBool('help', false);
-    ArgParser::addInt('n', 1);
-    ArgParser::addString('key', '');
-    ArgParser::addString('format', '');
-    ArgParser::parse();
-    extract(ArgParser::getOptions());
+    $parser = new ArgParser();
+    $parser->addBool('help', false);
+    $parser->addInt('n', 1);
+    $parser->addString('key', '');
+    $parser->addString('format', '');
+    $parser->parse();
+    extract($parser->getOptions());
 
     global $argc;
     if ($help || $argc == 1) {
@@ -52,7 +53,7 @@ KEY_NAME:
     word, word2
     email
     chinese, chinese2
-    name, name2
+    name, name2, manname, womanname
 
 FORMAT_STRING:
     insert into tb_demo values ('{phone}', '{email}');
@@ -65,4 +66,3 @@ if (PHP_SAPI == 'cli') {
 } else {
     exit('Please run under the commnad line.');
 }
-

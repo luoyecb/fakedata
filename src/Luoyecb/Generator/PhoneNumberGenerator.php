@@ -1,12 +1,11 @@
 <?php
-namespace Luoyecb;
+namespace Luoyecb\Generator;
 
 use Luoyecb\IGenerator;
 use Luoyecb\Util\RandUtil;
 
-class PhoneNumberGenerator implements IGenerator
-{
-    private $phoneNumberHead = [
+class PhoneNumberGenerator implements IGenerator {
+    private $phoneNumberHeads = [
         // China Mobile
         134, 135, 136, 137, 138, 139, 147, 150, 151, 152, 157, 158, 159, 1705, 178, 182, 183, 184, 187, 188,
         // China Unicom
@@ -16,10 +15,10 @@ class PhoneNumberGenerator implements IGenerator
         // virtual operators
         170, 171, 176,
     ];
-    private $headLen = 44;
 
     public function createData() {
-        $phone = $this->phoneNumberHead[ RandUtil::rand($this->headLen) ];
+        $index = RandUtil::randGe0LeMax(count($this->phoneNumberHeads)-1);
+        $phone = $this->phoneNumberHeads[$index];
         $phone .= RandUtil::randNumber(11 - strlen($phone));
         return $phone;
     }
