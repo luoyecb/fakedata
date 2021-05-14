@@ -1,5 +1,5 @@
 # 
-.PHONY: default env test build clean install
+.PHONY: default env test build clean
 
 default: test
 
@@ -13,13 +13,9 @@ env:
 test: env
 	phpunit --bootstrap vendor/autoload.php tests
 
-build:
-	@php scripts/build_phar.php
+build: clean
+	@php scripts/build_phar.php -dir "./" -index fakedata.php -execMode -output fakedata.phar
 	@echo Build successfully.
-
-install: build
-	@sh scripts/install.sh
-	@echo Install successfully.
 
 clean:
 	rm -rf *.phar

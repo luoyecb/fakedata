@@ -4,7 +4,7 @@ use Luoyecb\Util\RandUtil;
 
 class RandUtilTest extends TestCase {
 
-	const MAX_TIMES = 10000;
+	const MAX_TIMES = 100;
 
 	public function test_randGe0() {
 		for ($i = 0; $i < self::MAX_TIMES; $i++) {

@@ -7,7 +7,8 @@ use Luoyecb\FactoryGenerator;
 function execMain() {
     $parser = new ArgParser();
     $parser->addBool('help', false);
-    $parser->addInt('n', 1);
+    $parser->addBool('n', false);
+    $parser->addInt('times', 1);
     $parser->addString('key', '');
     $parser->addString('format', '');
     $parser->parse();
@@ -20,14 +21,21 @@ function execMain() {
     }
 
     if (!empty($key)) {
-        $ret = FactoryGenerator::$key();
-        if ($ret) {
-            echo $ret, "\n";
+        $ge = FactoryGenerator::create($key);
+        if ($ge) {
+            for ($i = 0; $i < $times; $i++) {
+                echo $ge->createData();
+                if (!$n) {
+                    echo PHP_EOL;
+                }
+            }
         }
-    } else if ($format) {
-        for ($j = 0; $j < $n; $j++) {
+    } else if (!empty($format)) {
+        for ($i = 0; $i < $times; $i++) {
             echo FactoryGenerator::formatString($format);
-            echo "\n";
+            if (!$n) {
+                echo PHP_EOL;
+            }
         }
     }
 }
@@ -40,10 +48,11 @@ Usage:
     php {$basename} [option]
 
 option:
-    -help:   show help information
+    -help:   Show this help information.
     -key:    KEY_NAME
     -format: FORMAT_STRING
-    -n:      NUM
+    -times:  NUM
+    -n:      Do not output line breaks.
 
 KEY_NAME:
     phone, phone2
@@ -57,8 +66,13 @@ KEY_NAME:
 
 FORMAT_STRING:
     insert into tb_demo values ('{phone}', '{email}');
+
+Example:
+    php {$basename} -key name
+    php {$basename} -format 'My name is {name}.'
 USAGE_STR;
-    echo "\n\n";
+    echo PHP_EOL;
+    echo PHP_EOL;
 }
 
 if (PHP_SAPI == 'cli') {
