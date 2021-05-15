@@ -6,17 +6,17 @@ use Luoyecb\FactoryGenerator;
 
 function execMain() {
     $parser = new ArgParser();
-    $parser->addBool('help', false);
-    $parser->addBool('n', false);
-    $parser->addInt('times', 1);
-    $parser->addString('key', '');
-    $parser->addString('format', '');
-    $parser->parse();
+    $parser->addBool('help', false, 'Show this help information.')
+        ->addBool('n', false, 'Do not output line breaks.')
+        ->addInt('times', 1, "Number of times generated.")
+        ->addString('key', '', 'KEY_NAME')
+        ->addString('format', '', 'FORMAT_STRING')
+        ->parse();
     extract($parser->getOptions());
 
     global $argc;
     if ($help || $argc == 1) {
-        printUsage();
+        printUsage($parser);
         return;
     }
 
@@ -40,43 +40,37 @@ function execMain() {
     }
 }
 
-function printUsage() {
-    global $argv;
-    $basename = basename($argv[0]);
+function printUsage(ArgParser $parser) {
+    $usage = $parser->buildUsage();
+    $binName = getBinName();
     echo <<<"USAGE_STR"
-Usage:
-    php {$basename} [option]
-
-option:
-    -help:   Show this help information.
-    -key:    KEY_NAME
-    -format: FORMAT_STRING
-    -times:  NUM
-    -n:      Do not output line breaks.
-
+{$usage}
 KEY_NAME:
-    phone, phone2
-    uuid
-    decimal
-    date, time, datetime
-    word, word2
-    email
-    chinese, chinese2
-    name, name2, manname, womanname
+  phone, phone2
+  uuid
+  decimal
+  date, time, datetime
+  word, word2
+  email
+  chinese, chinese2
+  name, name2, manname, womanname
 
 FORMAT_STRING:
-    insert into tb_demo values ('{phone}', '{email}');
+  insert into tb_demo values ('{phone}', '{email}');
 
 Example:
-    php {$basename} -key name
-    php {$basename} -format 'My name is {name}.'
+  {$binName} -key name
+  {$binName} -format 'My name is {name}.'
+
+
 USAGE_STR;
-    echo PHP_EOL;
-    echo PHP_EOL;
+}
+
+function getBinName() {
+    global $argv;
+    return basename($argv[0], '.php');
 }
 
 if (PHP_SAPI == 'cli') {
     execMain();
-} else {
-    exit('Please run under the commnad line.');
 }

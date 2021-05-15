@@ -4,84 +4,63 @@ use Luoyecb\FactoryGenerator;
 
 class FakedataTest extends TestCase {
 
-	public function testPhone() {
-		$obj = FactoryGenerator::create('phone');
-		$this->assertTrue(strlen($obj->createData()) == 11);
+	public function dataProvider() {
+		return [
+			['phone', '==', 11],
+			['phone2', '==', 11],
+			['uuid', '>=', 36],
+			['decimal', '>', 0],
+			['date', '>', 0],
+			['time', '>', 0],
+			['datetime', '>', 0],
+			['word', '>', 0],
+			['word2', '>', 0],
+			['email', '>', 1],
+			['chinese', '>', 0],
+			['chinese2', '>', 0],
+			['name', '>=', 2],
+			['name2', '>=', 2],
+			['manname', '>=', 2],
+			['womanname', '>=', 2],
+		];
 	}
 
-	public function testPhone2() {
-		$obj = FactoryGenerator::create('phone2');
-		$this->assertTrue(strlen($obj->createData()) == 11);
+	private function op($s, $op, $len): bool {
+		$res = strlen($s);
+		switch($op) {
+			case '==': return $res == $len;
+			case '>':  return $res >  $len;
+			case '>=': return $res >= $len;
+		}
+		return true;
 	}
 
-	public function testUUID() {
-		$obj = FactoryGenerator::create('uuid');
-		$this->assertTrue(strlen($obj->createData()) > 0);
+	/**
+	 * @dataProvider dataProvider
+	 */
+	public function testNormal($key, $op, $expected) {
+		$obj = FactoryGenerator::create($key);
+		$this->assertTrue($this->op($obj->createData(), $op, $expected));
 	}
 
-	public function testDecimal() {
-		$obj = FactoryGenerator::create('decimal');
-		$this->assertTrue(strlen($obj->createData()) > 0);
+	public function testCreate() {
+		$obj1 = FactoryGenerator::create('phone');
+		$obj2 = FactoryGenerator::create('phone');
+
+		$this->assertTrue($obj1 === $obj2);
 	}
 
-	public function testDate() {
-		$obj = FactoryGenerator::create('date');
-		$this->assertTrue(strlen($obj->createData()) > 0);
+	public function testStaticCall() {
+		$phone = FactoryGenerator::phone();
+		$this->assertTrue(strlen($phone) == 11);
 	}
 
-	public function testTime() {
-		$obj = FactoryGenerator::create('time');
-		$this->assertTrue(strlen($obj->createData()) > 0);
-	}
-
-	public function testDatetime() {
-		$obj = FactoryGenerator::create('datetime');
-		$this->assertTrue(strlen($obj->createData()) > 0);
-	}
-
-	public function testWord() {
-		$obj = FactoryGenerator::create('word');
-		$this->assertTrue(strlen($obj->createData()) > 0);
-	}
-
-	public function testWord2() {
-		$obj = FactoryGenerator::create('word2');
-		$this->assertTrue(strlen($obj->createData()) > 0);
-	}
-
-	public function testEmail() {
-		$obj = FactoryGenerator::create('email');
-		$this->assertTrue(strlen($obj->createData()) > 0);
-	}
-
-	public function testChinese() {
-		$obj = FactoryGenerator::create('chinese');
-		$this->assertTrue(strlen($obj->createData()) > 0);
-	}
-
-	public function testChinese2() {
-		$obj = FactoryGenerator::create('chinese2');
-		$this->assertTrue(strlen($obj->createData()) > 0);
-	}
-
-	public function testName() {
-		$obj = FactoryGenerator::create('name');
-		$this->assertTrue(strlen($obj->createData()) > 0);
-	}
-
-	public function testName2() {
-		$obj = FactoryGenerator::create('name2');
-		$this->assertTrue(strlen($obj->createData()) > 0);
-	}
-
-	public function testManName() {
-		$obj = FactoryGenerator::create('manname');
-		$this->assertTrue(strlen($obj->createData()) > 0);
-	}
-
-	public function testWomanName() {
-		$obj = FactoryGenerator::create('womanname');
-		$this->assertTrue(strlen($obj->createData()) > 0);
+	public function testFormatString() {
+		$str = 'My name is {manname}, phone is {phone}.';
+		$str = FactoryGenerator::formatString($str);
+		var_dump($str);
+		$this->assertTrue(strpos($str, '{') === false);
+		$this->assertTrue(strpos($str, '}') === false);
 	}
 
 }

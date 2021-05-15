@@ -23,27 +23,35 @@ class FactoryGenerator {
     private static $objectContainer = [];
 
     public static function create($geKey) {
-        if (!isset(self::$classmaps[$geKey])) {
+        if (!self::exists($geKey)) {
             return null;
         }
-        if (!isset(self::$objectContainer[$geKey])) {
+        if (!self::existsInstance($geKey)) {
             self::$objectContainer[$geKey] = new self::$classmaps[$geKey]();
         }
         return self::$objectContainer[$geKey];
     }
 
     public static function register($geKey, $className) {
-        if (!isset(self::$classmaps[$geKey]) && class_exists($className)) {
+        if (!self::exists($geKey) && class_exists($className)) {
             self::$classmaps[$geKey] = $className;
         }
     }
 
+    private static function exists($geKey): bool {
+        return isset(self::$classmaps[$geKey]);
+    }
+
+    private static function existsInstance($geKey): bool {
+        return isset(self::$objectContainer[$geKey]);
+    }
+
     public static function __callStatic($name, $args) {
-        if (!isset(self::$classmaps[$name])) {
-            return null;
-        }
         $obj = self::create($name);
-        return $obj->createData();
+        if ($obj !== null) {
+            return $obj->createData();
+        }
+        return null;
     }
 
     public static function formatString($string) {
@@ -53,12 +61,12 @@ class FactoryGenerator {
             $string);
     }
 
-    public static function _formatStringCallback($matchs) {
-        $key = $matchs[1];
-        if (!isset(self::$classmaps[$key])) {
-            return $matchs[0];
+    private static function _formatStringCallback($matchs) {
+        $name = $matchs[1];
+        $obj = self::create($name);
+        if ($obj !== null) {
+            return $obj->createData();
         }
-        $obj = self::create($key);
-        return $obj->createData();
+        return $matchs[0];
     }
 }
