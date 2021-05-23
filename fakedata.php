@@ -68,7 +68,9 @@ USAGE_STR;
 
 function getBinName() {
     global $argv;
-    return basename($argv[0], '.php');
+    $binName = basename($argv[0], '.php');
+    $binName = basename($binName, '.phar');
+    return $binName;
 }
 
 if (PHP_SAPI == 'cli') {
